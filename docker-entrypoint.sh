@@ -4,8 +4,31 @@ set -e
 
 #Variables
 EASY_RSA=/usr/share/easy-rsa
+CFG_TMPLT_DIR=/opt/app/template
 OPENVPN_DIR=/etc/openvpn
 echo "EasyRSA path: $EASY_RSA OVPN path: $OPENVPN_DIR"
+
+# create initial directories in mapped volume if they don't exist
+if [ ! -c $OPENVPN_DIR/config ]; then
+    mkdir $OPENVPN_DIR/config
+    cp $CFG_TMPLT_DIR/* $OPENVPN_DIR/config
+    if [ ! -c $OPENVPN_DIR/server.conf ]; then
+       cp $OPENVPN_DIR/config/server.conf $OPENVPN_DIR/server.conf
+    fi
+fi
+if [ ! -c $OPENVPN_DIR/clients ]; then
+    mkdir $OPENVPN_DIR/clients
+fi
+if [ ! -c $OPENVPN_DIR/db ]; then
+    mkdir $OPENVPN_DIR/db
+fi
+if [ ! -c $OPENVPN_DIR/log ]; then
+    mkdir $OPENVPN_DIR/log
+fi
+if [ ! -c $OPENVPN_DIR/staticclients ]; then
+    mkdir $OPENVPN_DIR/staticclients
+fi
+
 
 if [[ ! -f $OPENVPN_DIR/pki/ca.crt ]]; then
     export EASYRSA_BATCH=1 # see https://superuser.com/questions/1331293/easy-rsa-v3-execute-build-ca-and-gen-req-silently
