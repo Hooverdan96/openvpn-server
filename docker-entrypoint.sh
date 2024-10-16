@@ -9,23 +9,23 @@ OPENVPN_DIR=/etc/openvpn
 echo "EasyRSA path: $EASY_RSA OVPN path: $OPENVPN_DIR"
 
 # create initial directories in mapped volume if they don't exist
-if [ ! -c $OPENVPN_DIR/config ]; then
+if [ ! -d $OPENVPN_DIR/config ]; then
     mkdir $OPENVPN_DIR/config
     cp $CFG_TMPLT_DIR/* $OPENVPN_DIR/config
-    if [ ! -c $OPENVPN_DIR/server.conf ]; then
+    if [ ! -f $OPENVPN_DIR/server.conf ]; then
        cp $OPENVPN_DIR/config/server.conf $OPENVPN_DIR/server.conf
     fi
 fi
-if [ ! -c $OPENVPN_DIR/clients ]; then
+if [ ! -d $OPENVPN_DIR/clients ]; then
     mkdir $OPENVPN_DIR/clients
 fi
-if [ ! -c $OPENVPN_DIR/db ]; then
+if [ ! -d $OPENVPN_DIR/db ]; then
     mkdir $OPENVPN_DIR/db
 fi
-if [ ! -c $OPENVPN_DIR/log ]; then
+if [ ! -d $OPENVPN_DIR/log ]; then
     mkdir $OPENVPN_DIR/log
 fi
-if [ ! -c $OPENVPN_DIR/staticclients ]; then
+if [ ! -d $OPENVPN_DIR/staticclients ]; then
     mkdir $OPENVPN_DIR/staticclients
 fi
 
@@ -93,15 +93,36 @@ sysctl -p /etc/sysctl.conf
 
 echo 'Configuring iptables...'
 echo 'NAT for OpenVPN clients'
-iptables -t nat -A POSTROUTING -s $TRUST_SUB -o eth0 -j MASQUERADE
-iptables -t nat -A POSTROUTING -s $GUEST_SUB -o eth0 -j MASQUERADE
+if [ -z ${TRUST_SUB+x} ]; then
+   echo "TRUST_SUB is unset"
+else
+   iptables -t nat -A POSTROUTING -s $TRUST_SUB -o eth0 -j MASQUERADE
+fi
+if [ -z ${GUEST_SUB+x} ]; then
+   echo "GUEST_SUB is unset"
+else
+   iptables -t nat -A POSTROUTING -s $GUEST_SUB -o eth0 -j MASQUERADE
 
 echo 'Blocking ICMP for external clients'
-iptables -A FORWARD -p icmp -j DROP --icmp-type echo-request -s $GUEST_SUB 
-iptables -A FORWARD -p icmp -j DROP --icmp-type echo-reply -s $GUEST_SUB 
+if [ -z ${TRUST_SUB+x} ]; then
+   echo "TRUST_SUB is unset"
+else
+   iptables -A FORWARD -p icmp -j DROP --icmp-type echo-request -s $GUEST_SUB
+fi
+if [ -z ${GUEST_SUB+x} ]; then
+   echo "GUEST_SUB is unset"
+else
+   iptables -A FORWARD -p icmp -j DROP --icmp-type echo-reply -s $GUEST_SUB
+fi
 
 echo 'Blocking internal home subnet to access from external openvpn clients (Internet still available)'
-iptables -A FORWARD -s $GUEST_SUB -d $HOME_SUB -j DROP
+if [ -z ${GUEST_SUB+x} ]; then
+   echo "GUEST_SUB is unset"
+else
+   iptables -A FORWARD -s $GUEST_SUB -d $HOME_SUB -j DROP
+fi
+
+else
 
 if [[ ! -s fw-rules.sh ]]; then
     echo "No additional firewall rules to apply."
