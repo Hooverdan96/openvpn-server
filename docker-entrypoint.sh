@@ -14,9 +14,6 @@ echo "Template files path: $CFG_TMPLT_DIR"
 if [ ! -d $OPENVPN_DIR/config ]; then
     mkdir $OPENVPN_DIR/config
     cp $CFG_TMPLT_DIR/* $OPENVPN_DIR/config
-    if [ ! -f $OPENVPN_DIR/server.conf ]; then
-       cp $OPENVPN_DIR/template/server.conf $OPENVPN_DIR/server.conf
-    fi
 fi
 if [ ! -d $OPENVPN_DIR/clients ]; then
     mkdir $OPENVPN_DIR/clients
@@ -33,6 +30,12 @@ fi
 if [ ! -d $OPENVPN_DIR/pki ]; then
     mkdir $OPENVPN_DIR/pki
 fi
+
+# if server.conf doesn't exist, pull from template directory as a starting point
+if [ ! -f $OPENVPN_DIR/server.conf ]; then
+   cp $OPENVPN_DIR/template/server.conf $OPENVPN_DIR/server.conf
+fi
+
 if [[ ! -f $OPENVPN_DIR/pki/ca.crt ]]; then
     export EASYRSA_BATCH=1 # see https://superuser.com/questions/1331293/easy-rsa-v3-execute-build-ca-and-gen-req-silently
     cd $EASY_RSA
