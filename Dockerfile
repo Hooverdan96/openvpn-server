@@ -42,4 +42,4 @@ EXPOSE 1194/udp
 
 # Set the entrypoint to the docker-entrypoint.sh script, passing in the following arguments:
 # $REQ_COUNTRY $REQ_PROVINCE $REQ_CITY $REQ_ORG $REQ_OU $REQ_CN
-ENTRYPOINT ["./docker-entrypoint.sh", ]
+ENTRYPOINT ["./docker-entrypoint.sh"]
