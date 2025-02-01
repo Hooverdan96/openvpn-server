@@ -8,7 +8,7 @@ OPENVPN_DIR=/etc/openvpn
 echo "EasyRSA path: $EASY_RSA OVPN path: $OPENVPN_DIR"
 
 # invoke initial directory and file creation
-source dir_ini.sh
+source docker-dir-ini.sh
 
 if [[ ! -f $OPENVPN_DIR/pki/ca.crt ]]; then
     export EASYRSA_BATCH=1 # see https://superuser.com/questions/1331293/easy-rsa-v3-execute-build-ca-and-gen-req-silently
