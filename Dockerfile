@@ -15,7 +15,7 @@ RUN chmod 755 /usr/share/easy-rsa/*
 COPY bin /opt/app/bin
 COPY docker-entrypoint.sh /opt/app/docker-entrypoint.sh
 # Copy initial directory creation program
-COPY docker-dir-ini.sh
+COPY docker-dir-ini.sh /opt/app/docker-dir-ini.sh
 
 # Make all files in the bin directory executable
 RUN chmod +x bin/*; chmod +x docker-entrypoint.sh; chmod +x docker-dir-ini.sh
@@ -42,4 +42,4 @@ EXPOSE 1194/udp
 
 # Set the entrypoint to the docker-entrypoint.sh script, passing in the following arguments:
 # $REQ_COUNTRY $REQ_PROVINCE $REQ_CITY $REQ_ORG $REQ_OU $REQ_CN
-ENTRYPOINT ./docker-entrypoint.sh
+ENTRYPOINT ["./docker-entrypoint.sh", ]
