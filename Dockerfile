@@ -23,6 +23,7 @@ RUN chmod +x bin/*; chmod +x docker-entrypoint.sh; chmod +x docker-dir-ini.sh
 # Copy template files for later use during execution
 RUN mkdir -p /opt/app/template
 COPY config /opt/app/template
+COPY server.conf /opt/app/template
 COPY fw-rules.sh /opt/app/template/fw-rules.sh
 COPY openssl-easyrsa.cnf /opt/app/template/openssl-easrsa.cnf
 

@@ -28,5 +28,5 @@ fi
 
 # if server.conf doesn't exist, pull from template directory as a starting point
 if [ ! -f $OPENVPN_DIR/server.conf ]; then
-   cp $OPENVPN_DIR/template/server.conf $OPENVPN_DIR/server.conf
+   cp $CFG_TMPLT_DIR/server.conf $OPENVPN_DIR/server.conf
 fi
