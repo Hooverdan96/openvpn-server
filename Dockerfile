@@ -14,18 +14,26 @@ RUN chmod 755 /usr/share/easy-rsa/*
 # Copy all files in the current directory to the /opt/app directory in the container
 COPY bin /opt/app/bin
 COPY docker-entrypoint.sh /opt/app/docker-entrypoint.sh
-RUN mkdir -p /opt/app/clients \
-    /opt/app/db \
-    /opt/app/log \
-    /opt/app/pki \
-    /opt/app/staticclients \
-    /opt/app/config
-
-# Add the openssl-easyrsa.cnf file to the easy-rsa directory
-ADD openssl-easyrsa.cnf /opt/app/easy-rsa/
 
 # Make all files in the bin directory executable
 RUN chmod +x bin/*; chmod +x docker-entrypoint.sh
+
+# Copy template files for later use during execution
+RUN mkdir -p /opt/app/template
+COPY config /opt/app/template
+COPY fw-rules.sh /opt/app/template/fw-rules.sh
+COPY openssl-easyrsa.cnf /opt/app/template/openssl-easrsa.cnf
+
+# Move sub-directory creation to entrypoint.sh script
+# RUN mkdir -p /opt/app/clients \
+#    /opt/app/db \
+#    /opt/app/log \
+#    /opt/app/pki \
+#    /opt/app/staticclients \
+#    /opt/app/config
+
+# Add the openssl-easyrsa.cnf file to the easy-rsa directory
+COPY openssl-easyrsa.cnf /opt/app/easy-rsa/openssl-easyrsa.cnf
 
 # Expose the OpenVPN port (1194/udp)
 EXPOSE 1194/udp
